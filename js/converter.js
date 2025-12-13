@@ -1,14 +1,53 @@
-// ここからコードを書いてください
 export function setupConverter() {
-  const converter_input = document.getElementById("converter-input");
-  const input_value = parseFloat(converter_input.value);
-  const converter_from = document.getElementById("form-from");
-  const from_value = converter_from.value;
-  const converter_to = document.getElementById("form-to");
-  const to_value = converter_to.value;
-  const convert_result = input_value / 1000;
-  document.getElementById("convert-result").textContent =
-    input_value + from_value + "=" + convert_result + to_value;
-}
+  const converterForm = document.querySelector(".converter-form");
+  const converterInput = document.querySelector(".converter-input");
+  const converterFrom = document.querySelector(".converter-from");
+  const converterTo = document.querySelector(".converter-to");
+  const converterResult = document.querySelector(".converter-result");
 
-// export default setupTabs;
+  const lengthUnit = [
+    { name: "meter", base: 1 },
+    { name: "kilometer", base: 1000 },
+    { name: "centimeter", base: 0.01 },
+    { name: "millimeter", base: 0.001 },
+    { name: "inch", base: 0.0254 },
+    { name: "foot", base: 0.3048 },
+    { name: "yard", base: 0.9144 },
+    { name: "mile", base: 1609.344 },
+  ];
+
+  converterFrom.innerHTML = "";
+  converterTo.innerHTML = "";
+
+  for (const unit of lengthUnit) {
+    converterFrom.innerHTML += `<option value="${unit.base}">${unit.name}</option>`;
+    converterTo.innerHTML += `<option value="${unit.base}">${unit.name}</option>`;
+  }
+
+  // 最初のオプションを選択
+  if (converterFrom.options.length > 0) {
+    converterFrom.selectedIndex = 0;
+  }
+  if (converterTo.options.length > 0) {
+    converterTo.selectedIndex = 1;
+  }
+
+  function convert() {
+    const numberValue = parseFloat(converterInput.value);
+    if (isNaN(numberValue)) {
+      converterResult.textContent = "Please enter a valid number";
+      return; // 処理終了
+    }
+
+    const fromBase = converterFrom.value;
+    const toBase = converterTo.value;
+    const converted = (numberValue * fromBase) / toBase;
+    converterResult.textContent = `${numberValue} ${
+      lengthUnit[converterFrom.selectedIndex].name
+    } = ${converted.toFixed(3)} ${lengthUnit[converterTo.selectedIndex].name}`;
+  }
+
+  converterForm.addEventListener("input", convert);
+
+  convert();
+}
